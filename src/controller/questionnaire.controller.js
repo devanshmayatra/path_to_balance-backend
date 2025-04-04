@@ -43,8 +43,8 @@ const addQuestionnaire = asyncHandler(
 
 const getAllQuestionnaires = asyncHandler(
   async (req, res) => {
-    const questionnaires = await Questionnaire.find()
-      .populate('content');
+    const questionnaires = await FullQuestionnaire.find();
+      // .populate('content');
     if (!questionnaires) {
       throw new ApiError(404, "Questionnaires not found");
     }
@@ -69,8 +69,9 @@ const getAllQuestionnaires = asyncHandler(
 const getOneQuestionnaire = asyncHandler(
   async (req, res) => {
     const questionnaireId = req.params.id;
-    const questionnaire = await Questionnaire.findById(questionnaireId)
-      .populate('content');
+    // const questionnaire = await Questionnaire.findById(questionnaireId)
+    const questionnaire = await FullQuestionnaire.findById(questionnaireId);
+      // .populate('content');
 
     if (!questionnaire) {
       throw new ApiError(404, "Questionnaire not found");
@@ -94,10 +95,23 @@ const uploadFullQusstionnaire = asyncHandler(
   async (req, res) => {
     const body = req.body;
     const questionnaire =new FullQuestionnaire(body);
-    const savedQuestionnaire = await questionnaire.save();
-    console.log(savedQuestionnaire);
+    await questionnaire.save();
+    if(!questionnaire){
+      throw new ApiError(400, "Failed to save Questionnaire");
+    };
+
+    return res.status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            questionnaire: questionnaire
+          },
+          "Questionnaire retrieved Successfully"
+        )
+      )
   }
-)
+);
 
 export {
   addQuestionnaire,

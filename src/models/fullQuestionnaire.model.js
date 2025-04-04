@@ -1,9 +1,21 @@
 import { model, Schema } from "mongoose";
 
 const fullQuestionnaireSchema = Schema({
-  name: { type: String, required: true },
+  title: { type: String, required: true },
+  options: {
+    type: {
+      option1: String,
+      option2: String,
+      option3: String,
+      option4: String,
+    },
+  },
   questionnaire: {
-    type: {},
+    type: [
+      {
+        question: String,
+      },
+    ],
     required: true
   }
 }, {
