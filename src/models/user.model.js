@@ -38,10 +38,17 @@ const userSchema = new Schema({
     type: String,
     default: "",
   },
-  mentalHealthScore: {
-    type: Number,
-    default: 0,
-    max: 10
+  recentAssesment: {
+    type: {
+      sentiment: String,
+      risk_level: String,
+      summary: String,
+      suggestions: [
+        {
+          type: String,
+        }
+      ]
+    }
   },
   assesmentHistory: [
     {
@@ -50,9 +57,9 @@ const userSchema = new Schema({
         ref: "FullQuestionnaire",
         required: true
       },
-      score: {
-        type: Number,
-        max: 3,
+      evaluationId: {
+        type: Schema.Types.ObjectId,
+        ref:"EvaluationModel",
         required: true
       }
     }

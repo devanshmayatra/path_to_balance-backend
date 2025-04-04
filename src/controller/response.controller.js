@@ -1,22 +1,46 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { GoogleGenAI } from "@google/genai";
+import { User } from '../models/user.model.js'
+import { FullQuestionnaire } from '../models/fullQuestionnaire.model.js'
+import { EvaluationModel } from "../models/evaluationHistory.model.js";
 
 const goToAiResponse = asyncHandler(
   async (req, res) => {
-    const { evaluationScore } = req.body;
+    const { userID, questionnaireID, evaluationScore } = req.body;
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    // const options = {
-    //   0:
-    //   1:
-    //   2:
-    //   3:
-    // }
+    const user = await User.findById(userID);
+    const questionnaire = await FullQuestionnaire.findById(questionnaireID);
 
-    const prompt = `evaluationScore, You are a mental health analysis engine.
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    if (!questionnaire) {
+      throw new ApiError(404, "Questionnaire not found");
+    }
+
+    const options = {
+      0: "Not at all",
+      1: "Several days",
+      2: "More than half the days",
+      3: "Nearly everyday"
+    };
+
+    const promptData = evaluationScore.map(score => {
+      return {
+        question: score.question,
+        answer: options[score.answer]
+      };
+    });
+
+    const prompt = `You are a mental health analysis engine.
     
     Given the following evaluation score data:
-    ${JSON.stringify(evaluationScore, null, 2)}
+    ${JSON.stringify(promptData, null, 2)}
     
     Analyze the user's mental health state based on the data. Output your response in the following strict JSON format:
     
@@ -31,59 +55,60 @@ const goToAiResponse = asyncHandler(
     Only recommend a mental health professional if and only if necessary
     `
 
-
-
-    const answer = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPEN_ROUTER_API_KEY}`,
-        "HTTP-Referer": "app", // Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "path_to_balance", // Optional. Site title for rankings on openrouter.ai.
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        "model": "mistralai/mistral-7b-instruct:free",
-        "messages": [
-          {
-            "role": "user",
-            "content": prompt
-          }
-        ]
-      })
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: prompt,
     });
-
-    const body = await answer.json();
 
     function parseEscapedJson(escapedStr) {
       try {
-        // Step 1: Remove any leading/trailing whitespace
-        const trimmed = escapedStr.trim();
+        const cleanedStr = escapedStr.replace(/^```json\n/, '').replace(/\n```$/, '');
 
-        // Step 2: Unescape the escaped characters (like \n and \")
-        const unescaped = trimmed.replace(/\\n/g, '')
-          .replace(/\\"/g, '"')
-          .replace(/\\'/g, "'")
-          .replace(/\\\\/g, '\\');
+        const unescaped = cleanedStr.trim().replace(/\\n/g, '').replace(/\\"/g, '"');
 
-        // Step 3: Parse the unescaped string into JSON
-        const jsonObject = JSON.parse(unescaped);
-
-        return jsonObject;
+        return JSON.parse(unescaped);
       } catch (error) {
         console.error("Failed to parse JSON:", error.message);
         return null;
       }
-    }
+    };
 
-    console.log(body);
-    const sentiment = parseEscapedJson(body.choices[0].message.content);
+    const sentiment = parseEscapedJson(response.text);
+
+    const evaluation = new EvaluationModel({
+      userID,
+      questioannaireID: questionnaireID,
+      evaluationSummary: sentiment
+    });
+    evaluation.save();
+
+    const assesmentHistory = user.assesmentHistory;
+
+    assesmentHistory.push({
+      questionnaireId: questionnaire._id,
+      evaluationId: evaluation._id
+    })
+
+    console.log("90",assesmentHistory);
+
+    const updatedUser = await User.findByIdAndUpdate({
+      _id: userID,
+    }, {
+      $set: {
+        recentAssesment: evaluation.evaluationSummary,
+        assesmentHistory: assesmentHistory
+      },
+    }, {
+      new: true,
+      upsert: false
+    })
 
     return res.status(200)
       .json(
         new ApiResponse(
           200,
           {
-            sentiment: sentiment
+            sentiment: updatedUser
           },
           "Ai analysis done"
         )

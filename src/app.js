@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { errorHandler } from './middlewares/errors.middleware.js';
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use('/api/v1/queationnaire', questionnaireRouter);
 app.use('/api/v1/question', questionRouter);
 app.use('/api/v1/response', responseRouter);
 
+app.use(errorHandler);
 
-//questionnaire routes
 
 export { app };
