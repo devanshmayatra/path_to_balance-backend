@@ -10,7 +10,7 @@ const fullQuestionnaireSchema = Schema({
       option4: String,
     },
   },
-  questionnaire: {
+  questions: {
     type: [
       {
         question: String,
