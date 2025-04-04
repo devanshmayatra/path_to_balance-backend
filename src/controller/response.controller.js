@@ -8,9 +8,20 @@ const goToAiResponse = asyncHandler(
     console.log(evaluationScore);
 
     const prompt = {
-      data:evaluationScore,
-      
+      data: evaluationScore,
+
     }
+
+    return res.status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            questionnaire: questionnaire
+          },
+          "Work in progress"
+        )
+      )
   }
 );
 
