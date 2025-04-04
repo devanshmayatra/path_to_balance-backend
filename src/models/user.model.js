@@ -10,6 +10,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  bio: {
+    type: String,
+    default: "No Bio"
+  },
   email: {
     type: String,
     unique: true,
@@ -39,10 +43,18 @@ const userSchema = new Schema({
     default: 0,
     max: 10
   },
-  pastAssesmentsScore:[
+  assesmentHistory: [
     {
-      type: Number,
-      default: 0,
+      questionnaireId: {
+        type: Schema.Types.ObjectId,
+        ref: "FullQuestionnaire",
+        required: true
+      },
+      score: {
+        type: Number,
+        max: 3,
+        required: true
+      }
     }
   ],
   isLoggedIn: {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, signup , logout , getLoggedInUser } from "../controller/user.controller.js";
+import { login, signup , logout , getLoggedInUser, updateUser } from "../controller/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
@@ -24,6 +24,16 @@ router.route('/logout').post(
 
 router.route('/get-logged-in-user').post(
   getLoggedInUser,
+)
+
+router.route('/update-user').post(
+  upload.fields([
+    {
+      name: 'avatar',
+      maxCount: 1,
+    }
+  ]),
+  updateUser,
 )
 
 export default router;

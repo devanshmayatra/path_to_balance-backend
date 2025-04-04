@@ -7,16 +7,6 @@ import { uploadOnCloudinary } from "../utils/cloudinaryServicse.js";
 
 const signup = asyncHandler(async (req, res) => {
 
-  // get user details through frontend
-  // validation - details are not empty
-  // check if user already exist : through username and email
-  // check for images , check for avatar
-  // upload them to cloudinary , avatar
-  // create user object - create entry in db
-  // remove password and refresh token from response
-  //check for user creation
-  //return response
-
   const {
     fullName,
     userName,
@@ -107,11 +97,6 @@ const login = asyncHandler(async (req, res) => {
     new: true
   }).select("-password")
 
-  // const options = {
-  //   httpOnly: true,
-  //   secure: true
-  // }
-
   return res
     .status(200)
     .json(
@@ -158,19 +143,64 @@ const getLoggedInUser = asyncHandler(
     const { id } = req.body;
     const user = await User.findById(id);
 
-    if(!user){
+    if (!user) {
       throw new ApiError(404, "User not found");
     }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200, {user:user}, "User fetched succesfully."));
+      .status(200)
+      .json(new ApiResponse(200, { user: user }, "User fetched succesfully."));
   }
-)
+);
+
+const updateUser = asyncHandler(
+  async (req, res) => {
+    const newData = await req.body;
+    const userId = newData.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    let avatarLocalPath;
+    if (req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0) {
+      avatarLocalPath = req.files?.avatar[0]?.path;
+    }
+
+    console.log(avatarLocalPath)
+
+    let avatar;
+
+    if (avatarLocalPath) {
+      avatar = await uploadOnCloudinary(avatarLocalPath) || "";
+    }
+
+    if (avatarLocalPath) {
+      if (!avatar) {
+        throw new ApiError(404, "Avatar not uploaded")
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      avatar: avatar?.url || "",
+      fullName: newData?.fullName,
+      userName: newData?.userName,
+      email: newData?.email,
+      bio: newData?.bio,
+    }, { new: true });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { user: updatedUser }, "User fetched succesfully."));
+
+  }
+);
 
 export {
   signup,
   login,
   logout,
-  getLoggedInUser
+  getLoggedInUser,
+  updateUser
 }
