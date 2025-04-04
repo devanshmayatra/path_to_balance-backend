@@ -75,7 +75,7 @@ const goToAiResponse = asyncHandler(
       }
     }
 
-
+    console.log(body);
     const sentiment = parseEscapedJson(body.choices[0].message.content);
 
     return res.status(200)
