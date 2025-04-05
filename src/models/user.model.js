@@ -43,6 +43,7 @@ const userSchema = new Schema({
       sentiment: String,
       risk_level: String,
       summary: String,
+      assesmentScore:Number,
       suggestions: [
         {
           type: String,
