@@ -86,10 +86,7 @@ const goToAiResponse = asyncHandler(
         new ApiResponse(
           200,
           {
-            sentiment: {
-              updatedUser,
-              evaluation
-            }
+            sentiment:evaluation
           },
           "Ai analysis done"
         )
