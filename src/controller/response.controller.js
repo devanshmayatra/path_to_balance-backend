@@ -86,7 +86,7 @@ const goToAiResponse = asyncHandler(
         new ApiResponse(
           200,
           {
-            sentiment:evaluation
+            sentiment: evaluation
           },
           "Ai analysis done"
         )
@@ -94,6 +94,29 @@ const goToAiResponse = asyncHandler(
   }
 );
 
+const getEvaluation = asyncHandler(
+  async (req, res) => {
+    const { evaluationId } = req.body;
+
+    const evaluation = await EvaluationModel.findById(evaluationId);
+    if (!evaluation) {
+      throw new ApiError('No evaluation found', 404);
+    }
+
+    return res.status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            evaluation: evaluation
+          },
+          "Ai analysis done"
+        )
+      );
+  }
+)
+
 export {
   goToAiResponse,
+  getEvaluation
 }
