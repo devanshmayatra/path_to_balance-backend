@@ -21,6 +21,27 @@ class Prompts {
         `
   }
 
+
+  async taskPrompt(promptData , tenure) {
+    return `
+    Below are the last 3 mental health assessments for a user. Each assessment includes sentiment, risk level, score, summary, and suggestions. Give some meaningfull tasks even if the assesments is empty. Give only 1 task per user.
+    ${JSON.stringify(promptData, null, 2)}
+    
+
+    Use this data to analyze the user’s mental health trend and generate one meaningful ${tenure} task to support or improve their mental well-being.
+
+    Return the task in the following fixed format:
+
+    {
+      "userId": "67ea72919fcd0c0538cf74b2",
+      "task": {
+        "Title": "Mindful Moments: Daily Gratitude Practice",
+        "Description": "Dedicate 5 minutes each day to reflect on and write down 3 things you are grateful for. This practice can boost positivity and improve overall mood, even on challenging days."
+  }
+}
+    `
+  }
+
 }
 
 export const prompts = new Prompts();

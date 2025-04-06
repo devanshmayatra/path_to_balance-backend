@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryServicse.js";
+import { Task } from "../models/task.model.js";
 
 
 const signup = asyncHandler(async (req, res) => {
@@ -64,6 +65,11 @@ const signup = asyncHandler(async (req, res) => {
   if (!createdUser) {
     throw new ApiError(500, "Failed to create user");
   }
+
+  const task = new Task({
+    userId: createdUser._id,
+  });
+  await task.save();
 
   return res.status(201).json(
     new ApiResponse(200, createdUser, "User Registered Succesfully")
