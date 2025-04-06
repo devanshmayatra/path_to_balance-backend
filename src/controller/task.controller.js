@@ -20,6 +20,43 @@ const taskGenerator = asyncHandler(
   }
 );
 
+const toggleTask = asyncHandler(
+  async (req, res) => {
+    const { userId, taskId } = req.body;
+    const task = await Task.findOne({
+      userId
+    });
+    if (!task) {
+      throw new ApiError('No task found', 404);
+    };
+
+    let toggled = false;
+
+    task.dailyTask.forEach((t) => {
+      if (!toggled && String(t._id) === String(taskId)) {
+        t.status = !t.status;
+        toggled = true;
+      }
+    });
+
+    task.weeklyTask.forEach((t) => {
+      if (!toggled && String(t._id) === String(taskId)) {
+        t.status = !t.status;
+        toggled = true;
+      }
+    });
+
+    const newTask = await Task.findOneAndUpdate({ userId }, task, {
+      new: true
+    });
+
+    return res.status(200).json(
+      new ApiResponse(200, newTask, "Tasks updated succesfully")
+    );
+  }
+)
+
 export {
-  taskGenerator
+  taskGenerator,
+  toggleTask
 }
