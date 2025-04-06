@@ -65,7 +65,9 @@ const goToAiResponse = asyncHandler(
     const assesmentHistory = user.assesmentHistory;
 
     assesmentHistory.push({
+      questionnaireTitle:questionnaire.title,
       questionnaireId: questionnaire._id,
+      assesmentScore:evaluation.assesmentScore,
       evaluationId: evaluation._id
     })
 
@@ -96,7 +98,7 @@ const goToAiResponse = asyncHandler(
 
 const getEvaluation = asyncHandler(
   async (req, res) => {
-    const { evaluationId } = req.body;
+    const evaluationId = req.params.evaluationId;
 
     const evaluation = await EvaluationModel.findById(evaluationId);
     if (!evaluation) {
@@ -110,7 +112,7 @@ const getEvaluation = asyncHandler(
           {
             evaluation: evaluation
           },
-          "Ai analysis done"
+          "Evaluation fetched succesfully."
         )
       );
   }

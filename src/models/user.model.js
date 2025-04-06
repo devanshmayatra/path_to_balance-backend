@@ -43,7 +43,7 @@ const userSchema = new Schema({
       sentiment: String,
       risk_level: String,
       summary: String,
-      assesmentScore:Number,
+      assesmentScore: Number,
       suggestions: [
         {
           type: String,
@@ -53,14 +53,22 @@ const userSchema = new Schema({
   },
   assesmentHistory: [
     {
+      questionnaireTitle: {
+        type: String,
+        required: true
+      },
       questionnaireId: {
         type: Schema.Types.ObjectId,
         ref: "FullQuestionnaire",
         required: true
       },
+      assesmentScore: {
+        type: Number,
+        required: true
+      },
       evaluationId: {
         type: Schema.Types.ObjectId,
-        ref:"EvaluationModel",
+        ref: "EvaluationModel",
         required: true
       }
     }

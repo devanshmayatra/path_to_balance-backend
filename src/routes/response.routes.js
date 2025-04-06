@@ -7,7 +7,7 @@ router.route("/").post(
   goToAiResponse,
 )
 
-router.route("/get-evaluation").get(
+router.route("/get-evaluation/:evaluationId").get(
   getEvaluation,
 )
 
