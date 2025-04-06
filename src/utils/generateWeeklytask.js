@@ -5,7 +5,7 @@ import { getAssements } from './functions.js';
 import { GetResponseFromAi } from './GetResponseFromAi.js';
 import { Task } from '../models/task.model.js';
 
-cron.schedule("0 0 * * 0", () => generateTasks("weekly")); // Every Sunday at midnight
+cron.schedule("0 0 * * 0", () => generateWeeklyTask()); // Every Sunday at midnight
 
 const generateWeeklyTask = async () => {
 
