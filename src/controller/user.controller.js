@@ -5,7 +5,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryServicse.js";
 import { Task } from "../models/task.model.js";
 import { generateDailyTask } from '../utils/generateDailyTask.js'
-import { generateWeeklyTask } from '../utils/generateWeeklyTask.js'
+import { generateWeeklyTask } from '../utils/generateWeeklytask.js'
 
 
 const signup = asyncHandler(async (req, res) => {
