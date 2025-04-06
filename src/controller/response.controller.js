@@ -67,9 +67,9 @@ const goToAiResponse = asyncHandler(
     assesmentHistory.push({
       questionnaireTitle:questionnaire.title,
       questionnaireId: questionnaire._id,
-      assesmentScore:evaluation.assesmentScore,
+      assesmentScore:evaluation.evaluationSummary.assesmentScore,
       evaluationId: evaluation._id
-    })
+    });
 
     const updatedUser = await User.findByIdAndUpdate({
       _id: userID,
