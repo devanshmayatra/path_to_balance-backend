@@ -4,6 +4,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinaryServicse.js";
 import { Task } from "../models/task.model.js";
+import { generateDailyTask } from '../utils/generateDailyTask.js'
+import { generateWeeklyTask } from '../utils/generateWeeklyTask.js'
 
 
 const signup = asyncHandler(async (req, res) => {
@@ -70,6 +72,9 @@ const signup = asyncHandler(async (req, res) => {
     userId: createdUser._id,
   });
   await task.save();
+
+  generateDailyTask();
+  generateWeeklyTask();
 
   return res.status(201).json(
     new ApiResponse(200, createdUser, "User Registered Succesfully")

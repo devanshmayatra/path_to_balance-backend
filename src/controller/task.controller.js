@@ -20,6 +20,9 @@ const taskGenerator = asyncHandler(
   }
 );
 
+// generateDailyTask();
+// generateWeeklyTask();
+
 const toggleTask = asyncHandler(
   async (req, res) => {
     const { userId, taskId } = req.body;
