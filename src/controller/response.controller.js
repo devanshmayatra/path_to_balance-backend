@@ -116,7 +116,7 @@ const getEvaluation = asyncHandler(
         )
       );
   }
-)
+);
 
 export {
   goToAiResponse,

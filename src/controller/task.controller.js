@@ -7,7 +7,7 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 
 const taskGenerator = asyncHandler(
   async (req, res) => {
-    const { userId } = req.body;
+    const userId = req.params.id;
     const task = await Task.findOne({ userId });
 
     if (!task) {
