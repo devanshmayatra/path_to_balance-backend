@@ -45,15 +45,13 @@ const goToAiResponse = asyncHandler(
     async function parseEscapedJson(escapedStr) {
       try {
         const cleanedStr = escapedStr.replace(/^```json\n/, '').replace(/\n```$/, '');
-
         const unescaped = cleanedStr.trim().replace(/\\n/g, '').replace(/\\"/g, '"');
-
         return JSON.parse(unescaped);
       } catch (error) {
         console.error("Failed to parse JSON:", error.message);
         return null;
       }
-    };
+    }
 
     const sentiment = await parseEscapedJson(response);
 
