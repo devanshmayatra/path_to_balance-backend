@@ -40,6 +40,8 @@ const goToAiResponse = asyncHandler(
 
     const response = await GetResponseFromAi(prompt, "Mental Health Analysis Engine");
 
+    console.log(response);
+
     async function parseEscapedJson(escapedStr) {
       try {
         const cleanedStr = escapedStr.replace(/^```json\n/, '').replace(/\n```$/, '');
