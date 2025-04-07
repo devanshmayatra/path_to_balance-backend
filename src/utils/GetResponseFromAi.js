@@ -13,6 +13,8 @@ const GetResponseFromAi =
 
     const returnValue = response.text;
 
+    console.log(returnValue)
+
     return returnValue;
   };
 

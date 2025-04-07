@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { taskGenerator , toggleTask } from "../controller/task.controller.js";
+import { taskGenerator, toggleTask, assigntasks } from "../controller/task.controller.js";
 const router = Router();
 
 router.route("/:id").get(
@@ -9,5 +9,9 @@ router.route("/:id").get(
 router.route("/toggle").post(
   toggleTask
 );
+
+// router.route("/assign").post(
+//   assigntasks
+// );
 
 export default router;

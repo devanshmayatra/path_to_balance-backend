@@ -31,7 +31,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'user'],
+    enum: ['admin', 'user', 'specialist'],
     default: "user",
   },
   avatar: {
@@ -44,11 +44,20 @@ const userSchema = new Schema({
       risk_level: String,
       summary: String,
       assesmentScore: Number,
+      currentStatus: String,
       suggestions: [
         {
           type: String,
         }
       ]
+    },
+    default: {
+      sentiment: "",
+      risk_level: "",
+      summary: "",
+      assesmentScore: 0,
+      currentStatus: "",
+      suggestions: [""]
     }
   },
   assesmentHistory: [

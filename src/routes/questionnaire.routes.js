@@ -9,10 +9,15 @@ router.route("/add").post(
 
 router.route("/get/:id").get(
   getOneQuestionnaire
-)
+);
+
+router.route("/get/get-first").get(
+  getOneQuestionnaire
+);
+
 router.route("/all").get(
   getAllQuestionnaires
-)
+);
 
 router.route("/upload-full-questionnaire").post(
   uploadFullQusstionnaire

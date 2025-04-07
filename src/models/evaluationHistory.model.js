@@ -17,6 +17,7 @@ const evaluationHistorySchema = new Schema({
       risk_level: String,
       summary: String,
       assesmentScore:Number,
+      currentStatus:String,
       suggestions: [
         {
           type: String,

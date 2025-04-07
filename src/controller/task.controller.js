@@ -20,9 +20,6 @@ const taskGenerator = asyncHandler(
   }
 );
 
-// generateDailyTask();
-// generateWeeklyTask();
-
 const toggleTask = asyncHandler(
   async (req, res) => {
     const { userId, taskId } = req.body;
@@ -59,7 +56,18 @@ const toggleTask = asyncHandler(
   }
 )
 
+const assigntasks = asyncHandler(
+  async (req, res) => {
+    generateDailyTask();
+    generateWeeklyTask();
+    return res.status(200).json(
+      new ApiResponse(200, newTask, "Tasks assigned succesfully")
+    );
+  }
+)
+
 export {
   taskGenerator,
-  toggleTask
+  toggleTask,
+  assigntasks
 }

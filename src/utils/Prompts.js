@@ -13,6 +13,7 @@ class Prompts {
           "risk_level": "low | moderate | high",
           "summary": "Short summary of your reasoning",
           "assesmentScore":"0-100 (based on threat level)",
+          "currentStatus":"healthy | anxiety | depression | bipolar depression | post-traumatic stress disorder (PTSD) | schizophrenia | eating disorders | disruptive behaviour and dissocial disorders | neurodevelopmental disorders | "
           "suggestions": ["One sentence actionable suggestion", "Another suggestion if needed"]
         }
         
@@ -28,17 +29,17 @@ class Prompts {
     ${JSON.stringify(promptData, null, 2)}
     
 
-    Use this data to analyze the user’s mental health trend and generate one meaningful ${tenure} task to support or improve their mental well-being.
+    Use this data to analyze the user's mental health trend and generate one meaningful ${tenure} task to support or improve their mental well-being.
 
-    Return the task in the following fixed format:
+    Return the task in the following fixed format (Do not give any kind of extra data):
 
     {
       "userId": "67ea72919fcd0c0538cf74b2",
       "task": {
         "Title": "Mindful Moments: Daily Gratitude Practice",
         "Description": "Dedicate 5 minutes each day to reflect on and write down 3 things you are grateful for. This practice can boost positivity and improve overall mood, even on challenging days."
-  }
-}
+      }
+    }
     `
   }
 
