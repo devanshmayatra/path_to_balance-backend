@@ -44,21 +44,56 @@ const addQuestionnaire = asyncHandler(
 const getAllQuestionnaires = asyncHandler(
   async (req, res) => {
     const questionnaires = await FullQuestionnaire.find();
-      // .populate('content');
+    // .populate('content');
     if (!questionnaires) {
       throw new ApiError(404, "Questionnaires not found");
     }
 
     const questionnairedata = questionnaires.map(questionnaire => (
-      {id:questionnaire.id, title:questionnaire.title}
-    ))
+      { id: questionnaire.id, title: questionnaire.title }
+    ));
+
+    let questionnaireData = [];
+    questionnairedata.map(questionnaire => {
+      let len = questionnaire.title.split(" ").length
+      let sign = questionnaire.title.split(" ")[len - 1]
+      console.log(sign)
+      if (sign !== "I" && sign !== "II") {
+        questionnaireData.push(questionnaire);
+        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
+
+      }
+    });
+
+    questionnairedata.map(questionnaire => {
+      let len = questionnaire.title.split(" ").length
+      let sign = questionnaire.title.split(" ")[len - 1]
+      console.log(sign)
+      if (sign === "I") {
+        questionnaireData.push(questionnaire);
+        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
+      }
+    });
+
+    questionnairedata.map(questionnaire => {
+      let len = questionnaire.title.split(" ").length
+      let sign = questionnaire.title.split(" ")[len - 1]
+      console.log(sign)
+      if (sign === "II") {
+        questionnaireData.push(questionnaire);
+        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
+
+      }
+    });
+
+    console.log(questionnaireData.length)
 
     return res.status(200)
       .json(
         new ApiResponse(
           200,
           {
-            questionnaires: questionnairedata
+            questionnaires: questionnaireData
           },
           "Questionnaires retrieved Successfully"
         )
@@ -71,7 +106,7 @@ const getOneQuestionnaire = asyncHandler(
     const questionnaireId = req.params.id;
     // const questionnaire = await Questionnaire.findById(questionnaireId)
     const questionnaire = await FullQuestionnaire.findById(questionnaireId);
-      // .populate('content');
+    // .populate('content');
 
     if (!questionnaire) {
       throw new ApiError(404, "Questionnaire not found");
@@ -94,9 +129,9 @@ const getOneQuestionnaire = asyncHandler(
 const uploadFullQusstionnaire = asyncHandler(
   async (req, res) => {
     const body = req.body;
-    const questionnaire =new FullQuestionnaire(body);
+    const questionnaire = new FullQuestionnaire(body);
     await questionnaire.save();
-    if(!questionnaire){
+    if (!questionnaire) {
       throw new ApiError(400, "Failed to save Questionnaire");
     };
 
