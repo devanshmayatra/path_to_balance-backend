@@ -53,40 +53,26 @@ const getAllQuestionnaires = asyncHandler(
       { id: questionnaire.id, title: questionnaire.title }
     ));
 
-    let questionnaireData = [];
-    questionnairedata.map(questionnaire => {
-      let len = questionnaire.title.split(" ").length
-      let sign = questionnaire.title.split(" ")[len - 1]
-      console.log(sign)
-      if (sign !== "I" && sign !== "II") {
-        questionnaireData.push(questionnaire);
-        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
+    // Define the desired order for suffixes
+    const suffixOrder = {
+      'I': 1,
+      'II': 2
+    };
 
-      }
+    // Sort the questionnairedata array based on the suffix at the end of the title
+    const questionnaireData = questionnairedata.slice().sort((a, b) => {
+      // Extract the last word from each title
+      const aSuffix = a.title.trim().split(' ').slice(-1)[0];
+      const bSuffix = b.title.trim().split(' ').slice(-1)[0];
+
+      // Determine the order value for each suffix; default to 0 if not found
+      const aOrder = suffixOrder[aSuffix] || 0;
+      const bOrder = suffixOrder[bSuffix] || 0;
+
+      // Compare the order values
+      console.log(aOrder - bOrder)
+      return aOrder - bOrder;
     });
-
-    questionnairedata.map(questionnaire => {
-      let len = questionnaire.title.split(" ").length
-      let sign = questionnaire.title.split(" ")[len - 1]
-      console.log(sign)
-      if (sign === "I") {
-        questionnaireData.push(questionnaire);
-        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
-      }
-    });
-
-    questionnairedata.map(questionnaire => {
-      let len = questionnaire.title.split(" ").length
-      let sign = questionnaire.title.split(" ")[len - 1]
-      console.log(sign)
-      if (sign === "II") {
-        questionnaireData.push(questionnaire);
-        questionnairedata.filter(questionnaire => questionnaire.title != questionnaireData.map(ques => ques.title))
-
-      }
-    });
-
-    console.log(questionnaireData.length)
 
     return res.status(200)
       .json(
