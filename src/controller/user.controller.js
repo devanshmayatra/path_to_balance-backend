@@ -73,8 +73,8 @@ const signup = asyncHandler(async (req, res) => {
   });
   await task.save();
 
-  generateDailyTask();
-  generateWeeklyTask();
+  await generateDailyTask(createdUser._id);
+  await generateWeeklyTask(createdUser._id);
 
   return res.status(201).json(
     new ApiResponse(200, createdUser, "User Registered Succesfully")

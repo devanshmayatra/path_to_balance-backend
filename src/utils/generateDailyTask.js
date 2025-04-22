@@ -13,60 +13,68 @@ const task = cron.schedule('0 0 * * *', () => {
   timezone: 'Asia/Kolkata'
 });
 
-const generateDailyTask = async () => {
+const generateDailyTask = async (userId = null) => {
+  try {
+    // Fetch users based on the presence of userId
+    const users = userId ? await User.find({ _id: userId }) : await User.find();
 
-  const users = await User.find();
-  const assesments = await getAssements(users);
-  const response = await Promise.all(
-    assesments.map(async ass => {
-      const prompt = await prompts.taskPrompt(ass, "daily");
-      const response = await GetResponseFromAi(
-        prompt,
-        "You are Mental Health Support Bot Helping The User To Generate Task to Fix Their Issues"
-      );
-      return response;
-    })
-  );
+    // Retrieve assessments for the fetched users
+    const assessments = await getAssements(users);
 
-  function parseTaskJsonArray(response) {
-    return response.map(res => {
-      try {
-        // Remove code block formatting and trim extra spaces
-        const clean = res.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Generate prompts and get AI responses
+    const responses = await Promise.all(
+      assessments.map(async (assessment) => {
+        const prompt = await prompts.taskPrompt(assessment, "daily");
+        const aiResponse = await GetResponseFromAi(
+          prompt,
+          "You are a Mental Health Support Bot helping the user to generate tasks to address their issues."
+        );
+        return aiResponse;
+      })
+    );
 
-        // Parse to actual JSON
-        return JSON.parse(clean);
-      } catch (err) {
-        console.error("Failed to parse JSON:", err.message);
-        return null;
-      }
-    }).filter(Boolean); // remove any nulls from failed parsing
-  };
+    // Parse AI responses into JSON
+    const parseTaskJsonArray = (responses) => {
+      return responses
+        .map((res) => {
+          try {
+            const clean = res.replace(/```json/g, '').replace(/```/g, '').trim();
+            return JSON.parse(clean);
+          } catch (err) {
+            console.error("Failed to parse JSON:", err.message);
+            return null;
+          }
+        })
+        .filter(Boolean); // Remove any nulls from failed parsing
+    };
 
-  const tasks = parseTaskJsonArray(response);
+    const tasks = parseTaskJsonArray(responses);
 
-  const createdTasks = await Promise.all(
-    tasks.map(async (task) => {
-      // Find the Task document for the user
-      const existingTaskDoc = await Task.findOne({ userId: task.userId });
+    // Create or update tasks in the database
+    const createdTasks = await Promise.all(
+      tasks.map(async (task) => {
+        const existingTaskDoc = await Task.findOne({ userId: task.userId });
 
-      if (existingTaskDoc) {
-        // Push the new task to the weeklyTask array
-        existingTaskDoc.dailyTask.push(task.task);
-        await existingTaskDoc.save();
-        return existingTaskDoc;
-      } else {
-        // If not found, optionally create a new Task document
-        const newTaskDoc = await Task.create({
-          userId: task.userId,
-          weeklyTask: [],
-          dailyTask: [task.task]
-        });
-        return newTaskDoc;
-      }
-    })
-  );
+        if (existingTaskDoc) {
+          existingTaskDoc.dailyTask.push(task.task);
+          await existingTaskDoc.save();
+          return existingTaskDoc;
+        } else {
+          const newTaskDoc = await Task.create({
+            userId: task.userId,
+            weeklyTask: [],
+            dailyTask: [task.task],
+          });
+          return newTaskDoc;
+        }
+      })
+    );
+  } catch (error) {
+    console.error("Error in generateDailyTask:", error);
+    throw error;
+  }
 };
+
 
 export {
   generateDailyTask
