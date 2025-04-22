@@ -59,18 +59,13 @@ const getAllQuestionnaires = asyncHandler(
       'II': 2
     };
 
-    // Sort the questionnairedata array based on the suffix at the end of the title
     const questionnaireData = questionnairedata.slice().sort((a, b) => {
-      // Extract the last word from each title
       const aSuffix = a.title.trim().split(' ').slice(-1)[0];
       const bSuffix = b.title.trim().split(' ').slice(-1)[0];
 
-      // Determine the order value for each suffix; default to 0 if not found
       const aOrder = suffixOrder[aSuffix] || 0;
       const bOrder = suffixOrder[bSuffix] || 0;
 
-      // Compare the order values
-      console.log(aOrder - bOrder)
       return aOrder - bOrder;
     });
 

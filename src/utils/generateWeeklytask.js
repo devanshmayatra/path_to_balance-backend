@@ -5,7 +5,13 @@ import { getAssements } from './functions.js';
 import { GetResponseFromAi } from './GetResponseFromAi.js';
 import { Task } from '../models/task.model.js';
 
-cron.schedule("0 0 * * 0", () => generateWeeklyTask()); // Every Sunday at midnight
+const task = cron.schedule('0 0 * * 0', () => {
+  console.log('Weekly task executed at:', new Date());
+  generateWeeklyTask();
+}, {
+  scheduled: true,
+  timezone: 'Asia/Kolkata'
+});
 
 const generateWeeklyTask = async () => {
 
@@ -13,7 +19,7 @@ const generateWeeklyTask = async () => {
   const assesments = await getAssements(users);
   const response = await Promise.all(
     assesments.map(async ass => {
-      const prompt = await prompts.taskPrompt(ass , "weekly");
+      const prompt = await prompts.taskPrompt(ass, "weekly");
       const response = await GetResponseFromAi(
         prompt,
         "You are Mental Health Support Bot Helping The User To Generate Task to Fix Their Issues"
@@ -27,7 +33,7 @@ const generateWeeklyTask = async () => {
       try {
         // Remove code block formatting and trim extra spaces
         const clean = res.replace(/```json/g, '').replace(/```/g, '').trim();
-  
+
         // Parse to actual JSON
         return JSON.parse(clean);
       } catch (err) {
