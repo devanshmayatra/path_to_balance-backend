@@ -128,10 +128,31 @@ const uploadFullQusstionnaire = asyncHandler(
       )
   }
 );
+const getQuestionnaireByKeyword = asyncHandler(
+  async (req, res) => {
+    const { keyword } = req.body;
+    const questionnaires = await FullQuestionnaire.find({ title: { $regex: keyword, $options: 'i' } });
+    if (!questionnaires) {
+      throw new ApiError(400, "Failed to save Questionnaire");
+    };
+
+    return res.status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            questionnaire: questionnaires
+          },
+          "Questionnaire retrieved Successfully"
+        )
+      )
+  }
+)
 
 export {
   addQuestionnaire,
   getOneQuestionnaire,
   getAllQuestionnaires,
-  uploadFullQusstionnaire
+  uploadFullQusstionnaire,
+  getQuestionnaireByKeyword
 }
