@@ -85,7 +85,7 @@ const getAllQuestionnaires = asyncHandler(
 const getOneQuestionnaire = asyncHandler(
   async (req, res) => {
     const questionnaireId = req.params.id;
-    // console.log(questionnaireId)
+    console.log(questionnaireId)
 
     // const questionnaire = await Questionnaire.findById(questionnaireId)
 
@@ -93,10 +93,56 @@ const getOneQuestionnaire = asyncHandler(
 
     const flag = keywords.includes(questionnaireId);
 
-    // console.log(flag)
+    console
 
     const questionnaire = flag ? await FullQuestionnaire.find({ title: { $regex: questionnaireId, $options: 'i' } }) : await FullQuestionnaire.findById(questionnaireId);
     // .populate('content');
+
+    console.log(questionnaire)
+
+    if (!questionnaire) {
+      throw new ApiError(404, "Questionnaire not found");
+    }
+
+    return res.status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            questionnaire: questionnaire
+          },
+          "Questionnaire retrieved Successfully"
+        )
+      )
+
+  }
+);
+
+const getSpecificQuestionnaire = asyncHandler(
+  async (req, res) => {
+    const questionnaireId = req.params.id;
+    // console.log(questionnaireId)
+
+    const segregatedKeywords = questionnaireId.split("_");
+
+    // const questionnaire = await Questionnaire.findById(questionnaireId)
+
+    const keywords = ["comprehensive", "healthy", "anxiety", "depression", "bipolar depression", "post-traumatic stress disorder (PTSD)", "schizophrenia", "eating disorders", "oppositional defiant disorder screening", "neurodevelopmental disorders"];
+
+    const flag = segregatedKeywords.some(keyword => keywords.includes(keyword));
+
+    // console.log(flag)
+
+    const questionnaire = flag
+      ? await Promise.all(
+        segregatedKeywords.map(async (id) => {
+          console.log(id)
+          return await FullQuestionnaire.find({
+            title: { $regex: id, $options: 'i' }
+          });
+        })
+      )
+      : await FullQuestionnaire.findById(questionnaireId);
 
     // console.log(questionnaire)
 
@@ -114,7 +160,6 @@ const getOneQuestionnaire = asyncHandler(
           "Questionnaire retrieved Successfully"
         )
       )
-
   }
 )
 
@@ -166,5 +211,5 @@ export {
   getOneQuestionnaire,
   getAllQuestionnaires,
   uploadFullQusstionnaire,
-  // getQuestionnaireByKeyword
+  getSpecificQuestionnaire
 }

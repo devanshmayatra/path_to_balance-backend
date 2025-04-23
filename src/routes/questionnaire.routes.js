@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   addQuestionnaire, getAllQuestionnaires, getOneQuestionnaire, uploadFullQusstionnaire,
-  // getQuestionnaireByKeyword
+  getSpecificQuestionnaire
 } from "../controller/questionnaire.controller.js";
 
 const router = Router();
@@ -22,9 +22,9 @@ router.route("/all").get(
   getAllQuestionnaires
 );
 
-// router.route("/get-by-keyword").post(
-//   getQuestionnaireByKeyword
-// );
+router.route("/get-specific/:id").get(
+  getSpecificQuestionnaire
+);
 
 router.route("/upload-full-questionnaire").post(
   uploadFullQusstionnaire

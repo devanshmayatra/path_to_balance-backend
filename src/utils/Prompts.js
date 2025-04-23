@@ -13,7 +13,7 @@ class Prompts {
           "risk_level": "low | moderate | high",
           "summary": "Short summary of your reasoning",
           "assesmentScore":"0-100 (based on threat level)",
-          "currentStatus":"healthy | anxiety | depression | bipolar depression | post-traumatic stress disorder (PTSD) | schizophrenia | eating disorders | disruptive behaviour and dissocial disorders | neurodevelopmental disorders | "
+          "currentStatus":"healthy | anxiety | depression | bipolar depression | post-traumatic stress disorder (PTSD) | schizophrenia | eating disorders | oppositional defiant disorder screening | neurodevelopmental disorders | "
           "suggestions": ["One sentence actionable suggestion", "Another suggestion if needed"]
         }
         
