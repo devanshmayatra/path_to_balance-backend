@@ -85,9 +85,20 @@ const getAllQuestionnaires = asyncHandler(
 const getOneQuestionnaire = asyncHandler(
   async (req, res) => {
     const questionnaireId = req.params.id;
+    // console.log(questionnaireId)
+
     // const questionnaire = await Questionnaire.findById(questionnaireId)
-    const questionnaire = await FullQuestionnaire.findById(questionnaireId);
+
+    const keywords = ["comprehensive", "healthy", "anxiety", "depression", "bipolar depression", "post-traumatic stress disorder (PTSD)", "schizophrenia", "eating disorders", "disruptive behaviour and dissocial disorders", "neurodevelopmental disorders"];
+
+    const flag = keywords.includes(questionnaireId);
+
+    // console.log(flag)
+
+    const questionnaire = flag ? await FullQuestionnaire.find({ title: { $regex: questionnaireId, $options: 'i' } }) : await FullQuestionnaire.findById(questionnaireId);
     // .populate('content');
+
+    // console.log(questionnaire)
 
     if (!questionnaire) {
       throw new ApiError(404, "Questionnaire not found");
@@ -128,31 +139,32 @@ const uploadFullQusstionnaire = asyncHandler(
       )
   }
 );
-const getQuestionnaireByKeyword = asyncHandler(
-  async (req, res) => {
-    const { keyword } = req.body;
-    const questionnaires = await FullQuestionnaire.find({ title: { $regex: keyword, $options: 'i' } });
-    if (!questionnaires) {
-      throw new ApiError(400, "Failed to save Questionnaire");
-    };
 
-    return res.status(200)
-      .json(
-        new ApiResponse(
-          200,
-          {
-            questionnaire: questionnaires
-          },
-          "Questionnaire retrieved Successfully"
-        )
-      )
-  }
-)
+// const getQuestionnaireByKeyword = asyncHandler(
+//   async (req, res) => {
+//     const { keyword } = req.body;
+//     const questionnaires = await FullQuestionnaire.find({ title: { $regex: keyword, $options: 'i' } });
+//     if (!questionnaires) {
+//       throw new ApiError(400, "Failed to save Questionnaire");
+//     };
+
+//     return res.status(200)
+//       .json(
+//         new ApiResponse(
+//           200,
+//           {
+//             questionnaire: questionnaires
+//           },
+//           "Questionnaire retrieved Successfully"
+//         )
+//       )
+//   }
+// )
 
 export {
   addQuestionnaire,
   getOneQuestionnaire,
   getAllQuestionnaires,
   uploadFullQusstionnaire,
-  getQuestionnaireByKeyword
+  // getQuestionnaireByKeyword
 }
