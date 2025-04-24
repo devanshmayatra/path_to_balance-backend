@@ -145,9 +145,12 @@ const getSpecificQuestionnaire = asyncHandler(
       : await FullQuestionnaire.findById(questionnaireId);
 
     // console.log(questionnaire)
-    const questionnairedata = questionnaire.map(questionnaire => (
-      { id: questionnaire.id, title: questionnaire.title }
-    ));
+    const questionnairedata = questionnaire.flatMap(ques =>
+      ques.map(que => ({
+        id: que._id,
+        title: que.title
+      }))
+    );
 
     if (!questionnaire) {
       throw new ApiError(404, "Questionnaire not found");
